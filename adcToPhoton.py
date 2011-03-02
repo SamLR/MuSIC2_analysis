@@ -104,20 +104,28 @@ def peak_fit(hist, n_bins, min_bin, max_bin):
         
         func_name = "f%i"%i
         fit_f = TF1(func_name, "gaus", lBound, uBound) #min_bin, max_bin)#
-        working_hist[-1].Fit(func_name, "QR")#hist.Fit(func_name, "R+")
+        working_hist[-1].Fit(func_name, "QR+")#hist.Fit(func_name, "R+")
         
         working_hist.append(working_hist[-1].Clone("working%i"%i))
         working_hist[-1].Add(fit_f, -1) # subtract the previous peak as background for the next one
         
-        parameters.append(cArrayToList(fit_f.GetParameters(), 3))
+        # parameters.append(cArrayToList(fit_f.GetParameters(), 3))
+        par = fit_f.GetParameters()
+        for j in range(3): parameters.append(par[j])
         all_func += 'gaus(%i)+' % (3*i) if (i < len(peaks) - 1) else 'gaus(%i)' % (3*i)
-    
+    # TODO replace 'i' & 'j' etc w/ meaningful indexs
     print parameters
     print all_func
     fit_all = TF1("all", all_func, min_bin, max_bin)
-    for i in range(n_peaks):
-        for par in range (3): 
-            fit_all.SetParameter(par, parameters[i][par])
+    # for i in range(n_peaks):
+    #     for par in range (1,3): 
+    #         print i, par,  parameters[i][par]
+    #         fit_all.SetParameter(par, parameters[i][par])
+    
+    par_no = 0
+    for par in parameters: 
+        fit_all.SetParameter(par_no, par)
+        par_no += 1
         
     hist.Draw()
     # print "name", hist.GetName()
@@ -134,7 +142,7 @@ def stall():
     from time import sleep
     while True:
         try:
-            sleep(60)
+            sleep(30)
             exit()
         except KeyboardInterrupt:
             break
