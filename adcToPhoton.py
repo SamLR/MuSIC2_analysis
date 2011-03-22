@@ -12,10 +12,11 @@ from collections import OrderedDict
 def main():
     # TODO abstract this whole mess to allow processing of arbitary numbers of files etc
     ped_n = 70 
-    dat_n = 277
+    dat_n = 277 # 225 #235 #
     min_bin = 0
     max_bin = 4096
-    bin_merge = 4 # one bin ADC = one bin histo
+    bin_merge = 6 # one bin ADC = one bin histo 6 works ok
+    ch = 1
     
     ped_file_fmt = "data/pedestal_%03i.txt"
     dat_file_fmt = "data/test_%03i.txt"
@@ -28,7 +29,7 @@ def main():
         for line in file_ped:
             if '-' in line: continue
             count += 1
-            sum += int(line.split()[0])
+            sum += int(line.split()[ch])
             
     pedestal = int(round(sum / count))
     
@@ -36,21 +37,40 @@ def main():
         for line in file_dat:
             if '-' in line: continue
             # maintain bin values as integers
-            val = int(line.split()[0]) - pedestal
+            val = int(line.split()[ch]) - pedestal
             data.append(val)
-            h.Fill(val)
+
+    h, h2 = toPhotons(data, n_bins, min_bin, max_bin, quiet=False)
+    c = TCanvas("c2", "c2")    
+    h.Draw()
+    c2 = TCanvas("c3", "c3")    
+    h2.Draw()
+    
+    try:
+        stall(60)
+    except KeyboardInterrupt:
+        exit(1)
+
+def toPhotons(data, n_bins, min_bin, max_bin, quiet=True):
+    h = TH1D("d", "d", n_bins, min_bin, max_bin)
+    for val in data: h.Fill(val)
         
-    peaks, n_peaks = basic_peak_fit(h, n_bins, min_bin, max_bin)
+    peaks, n_peaks = basic_peak_fit(h, n_bins, min_bin, max_bin, quiet)
+    mids = []
+    for index in range(n_peaks):
+        if index == (n_peaks - 1): 
+            mids.append(max_bin)
+            break
+        mids.append((peaks[index] + peaks[index + 1])/2.0)
+    
     h2 = TH1D("d2", "d2", n_peaks, 0, n_peaks)
     
-    can = TCanvas ("c2", "c2")    
     for point in data:
-        bin = get_bin(point, peaks)
+        bin = get_bin(point, mids)
         h2.Fill(float(bin))
+        
+    return h, h2
 
-    h2.Draw()
-    stall(60)
-    
 def get_bin(point, bounds_in, min_bin = 0, max_bin = 4096):
     bounds = list(bounds_in)
     bounds.insert(0, min_bin)
@@ -63,9 +83,10 @@ def get_bin(point, bounds_in, min_bin = 0, max_bin = 4096):
         return -1
 
 
-def basic_peak_fit(hist, n_bins, min_bin, max_bin):
+def basic_peak_fit(hist, n_bins, min_bin, max_bin, quiet=True):
+    spectrum_ops = "nobackground goff" if quiet else "nobackground"
     spectrum = TSpectrum(10, 1)
-    n_peaks  = spectrum.Search(hist, 2, "nobackground", 0.1) # 4, 0.1
+    n_peaks  = spectrum.Search(hist, 2, spectrum_ops, 0.1) # 4, 0.1
     peak_pos = spectrum.GetPositionX()
     return cArrayToList(peak_pos, n_peaks), n_peaks
 

@@ -1,0 +1,19 @@
+
+================================================================================
+Dictionary notes - terms used
+
+-- beam --
+position
+target_mat
+target_mat_thickness?
+intensity
+
+-- calibration --
+source
+threshold
+
+----- header definition -----
+<source: beam, none, Na, etc> <position: (x, y)> <thrs: int>
+<target_material: Mg, Cu, None etc> <target_thickness: int>
+
+================================================================================
