@@ -12,7 +12,7 @@ from collections import OrderedDict
 def main():
     # TODO abstract this whole mess to allow processing of arbitary numbers of files etc
     ped_n = 70 
-    dat_n = 277 # 225 #235 #
+    dat_n = 225#277 # 225 #235 #
     min_bin = 0
     max_bin = 4096
     bin_merge = 6 # one bin ADC = one bin histo 6 works ok
@@ -37,7 +37,7 @@ def main():
         for line in file_dat:
             if '-' in line: continue
             # maintain bin values as integers
-            val = int(line.split()[ch]) - pedestal
+            val = int(line.split()[ch]) #- pedestal
             data.append(val)
 
     h, h2 = toPhotons(data, n_bins, min_bin, max_bin, quiet=False)
@@ -47,7 +47,7 @@ def main():
     h2.Draw()
     
     try:
-        stall(60)
+        stall(600)
     except KeyboardInterrupt:
         exit(1)
 
