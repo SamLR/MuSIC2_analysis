@@ -20,6 +20,7 @@ adc_types = ("Ped", "Dark", "Data", "Calib")
 hit_rate_types = ("Hit", "Hit_Off")
 
 def main(debug=0):
+    # TODO tidy this up
     file_dict = gen_metadata_list() 
     first = True
     for i in file_dict: print i, '\n', '*'*20, '\n'
@@ -43,7 +44,10 @@ def main(debug=0):
 
 
 def get_data(file_info, debug=0, n_ch=4, file_extension='.txt', file_loc='data/'):
-    """Generates a dictionary of values for the file in file_info"""
+    """
+    Generates a dictionary keyed to each channel with the list of adc data for each value
+    for the file in file_info
+    """
     file_name = file_loc + file_info['prefix'] + file_info['id'] + file_extension
     if debug>=1: print file_name
     # generate dict of blank lists for each channel's data

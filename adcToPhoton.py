@@ -7,49 +7,33 @@ S. Cook 23-2-11
 """
 
 from ROOT import *
+from sys import path
+from sams_utilities import *
 from collections import OrderedDict
 
-def main():
-    # TODO abstract this whole mess to allow processing of arbitary numbers of files etc
-    ped_n = 70 
-    dat_n = 225#277 # 225 #235 #
-    min_bin = 0
-    max_bin = 4096
-    bin_merge = 6 # one bin ADC = one bin histo 6 works ok
-    ch = 1
+
+def adc_to_photon(adc_data, adc_pedestal=0, min_adc_bin=0,
+                  max_adc_bin=4096, bin_merging=6, thrs=0):
+    """
+    This function will convert the contents of the list adc_data (after subtraction of 
+    the adc_pedestal from each value) into the number of detected photons.
+    This is done by finding peaks within its distribution. These peaks are assumed to 
+    correspond with MPPC responses to a certain number of photons after a threshold of
+    thrs photons is applied (i.e. for thrs=4 the first peak corresponds to 5 photons).
     
-    ped_file_fmt = "data/pedestal_%03i.txt"
-    dat_file_fmt = "data/test_%03i.txt"
-    n_bins = int((max_bin - min_bin)/bin_merge)
-    h = TH1D("d", "d", n_bins, min_bin, max_bin)
+    The function returns a dictionary with entries of the form:
+    <key=n_photons: value=frequency>
+    """
+    
+    n_bins = int((max_adc_bin - min_adc_bin)/bin_merging)
+    h = TH1D("d", "d", n_bins, min_adc_bin, max_adc_bin)
     data = []
     
-    sum = count = 0
-    with open(ped_file_fmt % ped_n, "r") as file_ped:
-        for line in file_ped:
-            if '-' in line: continue
-            count += 1
-            sum += int(line.split()[ch])
-            
-    pedestal = int(round(sum / count))
-    
-    with open(dat_file_fmt % dat_n, "r") as file_dat:
-        for line in file_dat:
-            if '-' in line: continue
-            # maintain bin values as integers
-            val = int(line.split()[ch]) #- pedestal
-            data.append(val)
+    if adc_pedestal != 0:
+        for entry in adc_data: entry = entry - adc_pedestal
+        
+    return toPhotons(adc_data, n_bins, min_adc_bin, max_adc_bin)
 
-    h, h2 = toPhotons(data, n_bins, min_bin, max_bin, quiet=False)
-    c = TCanvas("c2", "c2")    
-    h.Draw()
-    c2 = TCanvas("c3", "c3")    
-    h2.Draw()
-    
-    try:
-        stall(600)
-    except KeyboardInterrupt:
-        exit(1)
 
 def toPhotons(data, n_bins, min_bin, max_bin, quiet=True):
     h = TH1D("d", "d", n_bins, min_bin, max_bin)
@@ -57,19 +41,20 @@ def toPhotons(data, n_bins, min_bin, max_bin, quiet=True):
         
     peaks, n_peaks = basic_peak_fit(h, n_bins, min_bin, max_bin, quiet)
     mids = []
+    
     for index in range(n_peaks):
         if index == (n_peaks - 1): 
             mids.append(max_bin)
             break
         mids.append((peaks[index] + peaks[index + 1])/2.0)
-    
-    h2 = TH1D("d2", "d2", n_peaks, 0, n_peaks)
-    
+        
+    res = [0 for i in range(n_peaks)]
     for point in data:
         bin = get_bin(point, mids)
-        h2.Fill(float(bin))
-        
-    return h, h2
+        res[bin] += 1
+    
+    return res
+
 
 def get_bin(point, bounds_in, min_bin = 0, max_bin = 4096):
     bounds = list(bounds_in)
@@ -88,7 +73,9 @@ def basic_peak_fit(hist, n_bins, min_bin, max_bin, quiet=True):
     spectrum = TSpectrum(10, 1)
     n_peaks  = spectrum.Search(hist, 2, spectrum_ops, 0.1) # 4, 0.1
     peak_pos = spectrum.GetPositionX()
-    return cArrayToList(peak_pos, n_peaks), n_peaks
+    peaks = cArrayToList(peak_pos, n_peaks)
+    peaks.sort()
+    return peaks, n_peaks
 
 
 def peak_fit(hist, n_bins, min_bin, max_bin):
@@ -139,22 +126,14 @@ def peak_fit(hist, n_bins, min_bin, max_bin):
     return cArrayToList(fit_all.GetParameters(), 3*n_peaks)
 
 
-def cArrayToList(array, len):
-    res = []
-    for i in range(len):
-        res.append(array[i])
-    return res
-
-
-def stall(delay = 60):
-    from time import sleep
-    while True:
-        try:
-            sleep(delay)
-            exit()
-        except KeyboardInterrupt:
-            break
-
+def test():
+    file_name = "data/test_220.txt"
+    data = []
+    with open(file_name, 'r') as file_in:
+        for line in file_in:  
+            if ':' in line or line.isspace(): continue
+            data.append(int(line.split()[0]))
+    print adc_to_photon(data, 200)           
 
 if __name__ == '__main__':
-    main()
+    test()
