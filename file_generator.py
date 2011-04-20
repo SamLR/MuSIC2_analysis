@@ -10,7 +10,7 @@ Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 import sys
 import os
 
-entry_fmt = ['type', 'prefix', 'id']
+entry_fmt = ['type', 'file_name']
 current_header = {'header':
                         {'source': 'beam', 'position': (0,0), 'thrs': 4,
                          'target_material': 'mg', 'target_thickness': 3},
@@ -19,41 +19,38 @@ current_header = {'header':
 adc_types = ("Ped", "Dark", "Data", "Calib")
 hit_rate_types = ("Hit", "Hit_Off")
 
-def main(debug=0):
-    # TODO tidy this up
-    file_dict = gen_metadata_list() 
-    first = True
-    for i in file_dict: print i, '\n', '*'*20, '\n'
+def main():
+    file_dict = gen_metadata_list(verbose=True) 
     # find the pedestal files first and generate pedestal values for each ch
     for entry in file_dict:
         for file_ in entry['file_info']:
             # pedestal subtract
             # save the photon info
             if file_['type'] in adc_types:
-                dat = get_data(file_, debug, n_ch=4)
+                dat = get_data(file_, n_ch=4)
             elif file_['type'] in hit_rate_types:
-                dat = get_data(file_, debug, n_ch=1)
+                dat = get_data(file_, n_ch=1)
             else:
                 print "[Error] unknown data type: ", file_['type'], " Exiting"
                 return
             first = False
-            if not first and debug>=3: break
             file_["data"] = dat
-    # for i in file_dict: print i
-    
+            
+    for f in file_dict:
+        for e in f['file_info']:
+            print e
+        
 
 
-def get_data(file_info, debug=0, n_ch=4, file_extension='.txt', file_loc='data/'):
+def get_data(file_info, n_ch=4):
+    # TODO this should go somewhere else
     """
     Generates a dictionary keyed to each channel with the list of adc data for each value
     for the file in file_info
     """
-    file_name = file_loc + file_info['prefix'] + file_info['id'] + file_extension
-    if debug>=1: print file_name
+    file_name =file_info['file_name']
     # generate dict of blank lists for each channel's data
     res = dict(zip(range(n_ch), [[] for i in range(n_ch)]))
-    
-    if debug>=2: print res
     
     with open(file_name, 'r') as file_in:
         first_line = True
@@ -64,18 +61,18 @@ def get_data(file_info, debug=0, n_ch=4, file_extension='.txt', file_loc='data/'
                 continue
             dat = line.split()
             if len(dat) != n_ch:
-                if debug >=0: print "[WARNING] incorrect number of channels in line: ", line, "Continuing"
+                print "[WARNING] incorrect number of channels in line: \'", line, "\'Continuing"
                 continue
             for i in range(len(dat)):
                 res[i].append(dat[i])
-    if debug>=3: print res
     return res
 
 
-def gen_metadata_list(debug=False):
+def gen_metadata_list(file_name_prefix='data/', file_name_suffix='.txt', verbose=False):
     """
     Generates a time ordered list of entries which 
     group the files according to meta data
+    Verbose mode will print out all headers & file info once it has been collated
     """
     file_name = 'file_dict.txt'
     entries = []
@@ -103,20 +100,20 @@ def gen_metadata_list(debug=False):
                     data = []
             else:
                 # general data
+                line [1] = file_name_prefix + line[1] + line[2] + file_name_suffix
                 data.append(dict(zip(entry_fmt, line)))
-                
+    # add the final entries
     current_header['file_info'] = data
     entries.append(current_header)
     
-    if debug:
-        for entry in entries: 
-            print entry["header"]
-            for name in entry["file_info"]:
-                print name
-            print "\n\n"
-        
+    if verbose:
+        for i in entries: 
+            for j in i:
+                print '\t', j, ':\n', i[j]
+            print "*"*40,"\n"
+    
     return entries
 
 
 if __name__ == '__main__':
-    main(0)
+    main()

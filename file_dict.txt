@@ -17,81 +17,81 @@
    Data          test_           222        ##       
 # position (-17,20)
 # intensity 0.636
-   Hit           hit_rates_       012        ##  position (-17, 20) beam = 0.636 uA
+   Hit           hit_rates_      012        ##  position (-17, 20) beam = 0.636 uA
    Data          test_           223        ##  position (-17, 20) beam = 0.636 uA
-   Hit_Off       hit_rates_       013        ##  position (-17, 20) beam = off  
+   Hit_Off       hit_rates_      013        ##  position (-17, 20) beam = off  
 # position (-17,-16)
 # intensity 0.893
-   Hit           hit_rates_       014        ##  position (-17,-16) beam = 0.893 uA
+   Hit           hit_rates_      014        ##  position (-17,-16) beam = 0.893 uA
    Data          test_           224        ##  position (-17,-16) beam = 0.893 uA   
-   Hit           hit_rates_       225        ##  position (-17,-16) beam = 0.893 uA
-   Hit_Off       hit_rates_       226        ##  position (-17,-16) beam = off     
+   Hit           hit_rates_      225        ##  position (-17,-16) beam = 0.893 uA
+   Hit_Off       hit_rates_      226        ##  position (-17,-16) beam = off     
 # position (-17,0)
 # intensity 0.967
-   Hit           hit_rates_       015        ##  position (-17, 0) beam = 0.967 uA
+   Hit           hit_rates_      015        ##  position (-17, 0) beam = 0.967 uA
    Data          test_           225        ##  position (-17, 0) beam = 0.967 uA   
-   Hit           hit_rates_       227        ##  position (-17, 0) beam = 0.967 uA
-   Hit_Off       hit_rates_       228        ##  position (-17, 0) beam = off
+   Hit           hit_rates_      227        ##  position (-17, 0) beam = 0.967 uA
+   Hit_Off       hit_rates_      228        ##  position (-17, 0) beam = off
 # position (17,0)
 # intensity 1.014
-   Hit           hit_rates_       016        ##  position (17, 0) beam = 1.014 uA
+   Hit           hit_rates_      016        ##  position (17, 0) beam = 1.014 uA
    Data          test_           226        ##  position (17, 0) beam = 1.014 uA   
-   Hit           hit_rates_       229        ##  position (17, 0) beam = 1.014 uA
-   Hit_Off       hit_rates_       230        ##  position (17, 0) beam = off                                                                                                                                                                                                                                       # position (17,20)
+   Hit           hit_rates_      229        ##  position (17, 0) beam = 1.014 uA
+   Hit_Off       hit_rates_      230        ##  position (17, 0) beam = off                                                                                                                                                                                                                                       # position (17,20)
 # intensity 0.939
-   Hit           hit_rates_       018        ##  position (17, 20) beam = 0.939 uA
+   Hit           hit_rates_      018        ##  position (17, 20) beam = 0.939 uA
    Data          test_           227        ##  position (17, 20) beam = 0.939 uA   
-   Hit           hit_rates_       231        ##  position (17, 20) beam = 0.939 uA
-   Hit_Off       hit_rates_       232        ##  position (17, 20) beam = off                                                                                    
+   Hit           hit_rates_      231        ##  position (17, 20) beam = 0.939 uA
+   Hit_Off       hit_rates_      232        ##  position (17, 20) beam = off                                                                                    
 # position (17,-16)
 # intensity 0.878
-   Hit           hit_rates_       019        ##  position (17, -16) beam = 0.878 uA
+   Hit           hit_rates_      019        ##  position (17, -16) beam = 0.878 uA
    Data          test_           228        ##  position (17, -16) beam = 0.878 uA   
-   Hit           hit_rates_       233        ##  position (17, -16) beam = 0.878 uA
-   Hit_Off       hit_rates_       234        ##  position (17, -16) beam = off                                                                                    
+   Hit           hit_rates_      233        ##  position (17, -16) beam = 0.878 uA
+   Hit_Off       hit_rates_      234        ##  position (17, -16) beam = off                                                                                    
 # position (0,-16)
 # intensity 0.908
-   Hit           hit_rates_       020        ##  position (0, -16) beam = 0.908 uA
+   Hit           hit_rates_      020        ##  position (0, -16) beam = 0.908 uA
    Data          test_           229        ##  position (0, -16) beam = 0.908 uA   
-   Hit           hit_rates_       235        ##  position (0, -16) beam = 0.908 uA
-   Hit_Off       hit_rates_       236        ##  position (0, -16) beam = off                                                                                    
+   Hit           hit_rates_      235        ##  position (0, -16) beam = 0.908 uA
+   Hit_Off       hit_rates_      236        ##  position (0, -16) beam = off                                                                                    
 # position (0,20)
 # intensity 0.833
-   Hit           hit_rates_       021        ##  position (0, 20) beam = 0.833 uA
+   Hit           hit_rates_      021        ##  position (0, 20) beam = 0.833 uA
    Data          test_           230        ##  position (0, 20) beam = 0.833 uA   
-   Hit           hit_rates_       237        ##  position (0, 20) beam = 0.833 uA
-   Hit_Off       hit_rates_       238        ##  position (0, 20) beam = off                                                                                    
+   Hit           hit_rates_      237        ##  position (0, 20) beam = 0.833 uA
+   Hit_Off       hit_rates_      238        ##  position (0, 20) beam = off                                                                                    
 # position (0,0)
 # intensity 0.863
-   Hit           hit_rates_       022        ##  position (0, 0) beam = 0.863 uA
+   Hit           hit_rates_      022        ##  position (0, 0) beam = 0.863 uA
    Data          test_           231        ##  position (0, 0) beam = 0.863 uA   
-   Hit           hit_rates_       239        ##  position (0, 0) beam = 0.863 uA
-   Hit_Off       hit_rates_       240        ##  position (0, 0) beam = off  
+   Hit           hit_rates_      239        ##  position (0, 0) beam = 0.863 uA
+   Hit_Off       hit_rates_      240        ##  position (0, 0) beam = off  
 # target_mat cu                                                                                  
 # position (0,25)
 # intensity 0.560
-   Hit           hit_rates_       023        ##  position (0, 25) beam = 0.560 uA
+   Hit           hit_rates_      023        ##  position (0, 25) beam = 0.560 uA
    Data          test_           232        ##  position (0, 25) beam = 0.560 uA   
-   Hit           hit_rates_       241        ##  position (0, 25) beam = 0.560 uA
-   Hit_Off       hit_rates_       242        ##  position (0, 25) beam = off                                                                                    
+   Hit           hit_rates_      241        ##  position (0, 25) beam = 0.560 uA
+   Hit_Off       hit_rates_      242        ##  position (0, 25) beam = off                                                                                    
 # position (-17,25)
 # intensity 0.575
-   Hit           hit_rates_       024        ##  position (-17, 25) beam = 0.575 uA
+   Hit           hit_rates_      024        ##  position (-17, 25) beam = 0.575 uA
    Data          test_           233        ##  position (-17, 25) beam = 0.575 uA   
-   Hit           hit_rates_       243        ##  position (-17, 25) beam = 0.575 uA
-   Hit_Off       hit_rates_       244        ##  position (-17, 25) beam = off                                                                                    
+   Hit           hit_rates_      243        ##  position (-17, 25) beam = 0.575 uA
+   Hit_Off       hit_rates_      244        ##  position (-17, 25) beam = off                                                                                    
 # position (0,20)
 # intensity 0.772
-   Hit           hit_rates_       025        ##  position (0, 20) beam = 0.772 uA
+   Hit           hit_rates_      025        ##  position (0, 20) beam = 0.772 uA
    Data          test_           234        ##  position (0, 20) beam = 0.772 uA   
-   Hit           hit_rates_       245        ##  position (0, 20) beam = 0.772 uA
-   Hit_Off       hit_rates_       246        ##  position (0, 20) beam = off                                                                                    
+   Hit           hit_rates_      245        ##  position (0, 20) beam = 0.772 uA
+   Hit_Off       hit_rates_      246        ##  position (0, 20) beam = off                                                                                    
 # position (0,0)
 # intensity 0.862
-   Hit           hit_rates_       026        ##  position (0, 0) beam = 0.772 uA
+   Hit           hit_rates_      026        ##  position (0, 0) beam = 0.772 uA
    Data          test_           235        ##  position (0, 0) beam = 0.772 uA   
-   Hit           hit_rates_       247        ##  position (0, 0) beam = 0.772 uA
-   Hit           hit_rates_       248        ##  position (0, 0) beam = 0.772 uA          
+   Hit           hit_rates_      247        ##  position (0, 0) beam = 0.772 uA
+   Hit           hit_rates_      248        ##  position (0, 0) beam = 0.772 uA          
 ##                                                           
    Dark          test_           237        ##  position (0, 0)                             
 ##                                                           
@@ -103,168 +103,168 @@
    Data          test_           242        ##  position (0, 0)                   
 ## upstream detector changed                                 
 # target_mat thicker                                         
-   Hit           hit_rates_       027        ##  position (0, 0)                
+   Hit           hit_rates_      027        ##  position (0, 0)                
    Data          test_           244        ##  position (0, 0)                   
-   Hit           hit_rates_       249        ##  position (0, 0)                
-   Hit           hit_rates_       250        ##  position (0, 0)                       
+   Hit           hit_rates_      249        ##  position (0, 0)                
+   Hit           hit_rates_      250        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       028        ##  position (0, 0)                
+   Hit           hit_rates_      028        ##  position (0, 0)                
    Data          test_           245        ##  position (0, 0)                   
-   Hit           hit_rates_       251        ##  position (0, 0)                       
+   Hit           hit_rates_      251        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       029        ##  position (0, 0)                
+   Hit           hit_rates_      029        ##  position (0, 0)                
    Data          test_           246        ##  position (0, 0)                   
-   Hit           hit_rates_       252        ##  position (0, 0)                       
+   Hit           hit_rates_      252        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       030        ##  position (0, 0)                
+   Hit           hit_rates_      030        ##  position (0, 0)                
    Data          test_           247        ##  position (0, 0)                   
-   Hit           hit_rates_       253        ##  position (0, 0)                       
+   Hit           hit_rates_      253        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       031        ##  position (0, 0)                
+   Hit           hit_rates_      031        ##  position (0, 0)                
    Data          test_           248        ##  position (0, 0)                                                                                                          
 ##                                                           
-   Hit           hit_rates_       032        ##  position (0, 0)                
+   Hit           hit_rates_      032        ##  position (0, 0)                
    Data          test_           249        ##  position (0, 0)                   
-   Hit           hit_rates_       254        ##  position (0, 0)                       
+   Hit           hit_rates_      254        ##  position (0, 0)                       
 ##                                                           
-   Hit_Off       hit_rates_       033        ##  position (0, 0)                
+   Hit_Off       hit_rates_      033        ##  position (0, 0)                
    Dark          test_           250        ##  position (0, 0)                                                                                                          
 ##                                                           
-   Hit           hit_rates_       034        ##  position (0, 0)                
-   Hit           hit_rates_       035        ##  position (0, 0)                
+   Hit           hit_rates_      034        ##  position (0, 0)                
+   Hit           hit_rates_      035        ##  position (0, 0)                
    Data          test_           251        ##  position (0, 0)                
-   Hit           hit_rates_       255        ##  position (0, 0)                       
+   Hit           hit_rates_      255        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       036        ##  position (0, 0)                
+   Hit           hit_rates_      036        ##  position (0, 0)                
    Data          test_           252        ##  position (0, 0)                   
-   Hit           hit_rates_       256        ##  position (0, 0)                       
+   Hit           hit_rates_      256        ##  position (0, 0)                       
 ##                                                           
-   Hit           hit_rates_       037        ##  position (0, 0)                        
+   Hit           hit_rates_      037        ##  position (0, 0)                        
 # position (-17,34)
-   Hit           hit_rates_       041        ##  position (-17, 34)                
+   Hit           hit_rates_      041        ##  position (-17, 34)                
    Data          test_           257        ##  position (-17, 34)                   
-   Hit           hit_rates_       258        ##  position (-17, 34)                       
+   Hit           hit_rates_      258        ##  position (-17, 34)                       
 ##
-   Hit           hit_rates_       042        ##  position (-17, 34)                
+   Hit           hit_rates_      042        ##  position (-17, 34)                
    Data          test_           258        ##  position (-17, 34)                   
-   Hit           hit_rates_       259        ##  position (-17, 34)                       
+   Hit           hit_rates_      259        ##  position (-17, 34)                       
 ##
-   Hit           hit_rates_       043        ##  position (-17, 34)                
+   Hit           hit_rates_      043        ##  position (-17, 34)                
    Data          test_           260        ##  position (-17, 34)                   
-   Hit           hit_rates_       261        ##  position (-17, 34)                       
+   Hit           hit_rates_      261        ##  position (-17, 34)                       
 ## 
-   Hit           hit_rates_       044        ##  position (-17, 34)                
+   Hit           hit_rates_      044        ##  position (-17, 34)                
    Data          test_           260        ##  position (-17, 34)                   
-   Hit           hit_rates_       261        ##  position (-17, 34)                       
+   Hit           hit_rates_      261        ##  position (-17, 34)                       
 ##
-   Hit           hit_rates_       045        ##  position (-17, 34)
+   Hit           hit_rates_      045        ##  position (-17, 34)
 # position (0,0)
-   Hit_Off       hit_rates_       046        ##  position (0, 0)                                                                                       
-   Hit_Off       hit_rates_       047        ##  position (0, 0)                                                                                       
-   Hit_Off       hit_rates_       048        ##  position (0, 0)                                                                                       
+   Hit_Off       hit_rates_      046        ##  position (0, 0)                                                                                       
+   Hit_Off       hit_rates_      047        ##  position (0, 0)                                                                                       
+   Hit_Off       hit_rates_      048        ##  position (0, 0)                                                                                       
 # intensity 0.1514
-   Hit           hit_rates_       049        ##  position (0, 0) beam = 0.1514
-   Hit           hit_rates_       050        ##  position (0, 0) beam = 0.1514
-   Hit           hit_rates_       051        ##  position (0, 0) beam = 0.1514
+   Hit           hit_rates_      049        ##  position (0, 0) beam = 0.1514
+   Hit           hit_rates_      050        ##  position (0, 0) beam = 0.1514
+   Hit           hit_rates_      051        ##  position (0, 0) beam = 0.1514
 # position (-35,25)
-   Hit_Off       hit_rates_       052        ##  position (-35, 25) 
-   Hit_Off       hit_rates_       053        ##  position (-35, 25) 
-   Hit           hit_rates_       054        ##  position (-35, 25) 
-   Hit           hit_rates_       055        ##  position (-35, 25) 
-   Hit           hit_rates_       056        ##  position (-35, 25)  
+   Hit_Off       hit_rates_      052        ##  position (-35, 25) 
+   Hit_Off       hit_rates_      053        ##  position (-35, 25) 
+   Hit           hit_rates_      054        ##  position (-35, 25) 
+   Hit           hit_rates_      055        ##  position (-35, 25) 
+   Hit           hit_rates_      056        ##  position (-35, 25)  
    Data          test_           262        ##  position (-35, 25)                      
 ##
-   Hit           hit_rates_       057        ##  position (-35, 25)                
+   Hit           hit_rates_      057        ##  position (-35, 25)                
    Data          test_           263        ##  position (-35, 25)                   
-   Hit           hit_rates_       264        ##  position (-35, 25)                       
+   Hit           hit_rates_      264        ##  position (-35, 25)                       
 ##                                  
-   Hit           hit_rates_       058        ##  position (-35, 25)                
+   Hit           hit_rates_      058        ##  position (-35, 25)                
    Data          test_           264        ##  position (-35, 25)                       
    Data          test_           265        ##  position (-35, 25)                       
 ##
-   Hit_Off       hit_rates_       060        ##  position (-35, 25)                
+   Hit_Off       hit_rates_      060        ##  position (-35, 25)                
    Dark          test_           266        ##  position (-35, 25)                       
    Ped           test_           267        ##  position (-35, 25)                       
 ##
-   Hit           hit_rates_       061        ##  position (-35, 25)                
+   Hit           hit_rates_      061        ##  position (-35, 25)                
    Data          test_           268        ##  position (-35, 25)                                                                                                          
 ##
-   Hit           hit_rates_       062        ##  position (-35, 25)                
+   Hit           hit_rates_      062        ##  position (-35, 25)                
    Data          test_           269        ##  position (-35, 25)                   
-   Hit           hit_rates_       270        ##  position (-35, 25)                       
+   Hit           hit_rates_      270        ##  position (-35, 25)                       
 ##
-   Hit           hit_rates_       063        ##  position (-35, 25)                
+   Hit           hit_rates_      063        ##  position (-35, 25)                
    Data          test_           270        ##  position (-35, 25)                   
-   Hit           hit_rates_       271        ##  position (-35, 25)                       
+   Hit           hit_rates_      271        ##  position (-35, 25)                       
 ##
-   Hit_Off       hit_rates_       064        ##  position (-35, 25)                
+   Hit_Off       hit_rates_      064        ##  position (-35, 25)                
    Ped           test_           272        ##  position (-35, 25)                   
    Dark          test_           273        ##  position (-35, 25)                   
 ## beam time end calibration data
 ## calibration
 # source none
-   Hit_Off       hit_rates_       065        ##
+   Hit_Off       hit_rates_      065        ##
    Ped           pedestal_       066        ##
    Dark          test_           274        ##
-   Hit_Off       hit_rates_       275        ##
+   Hit_Off       hit_rates_      275        ##
 # source 22Na
-   Hit           hit_rates_       066        ##
+   Hit           hit_rates_      066        ##
    Ped           pedestal_       067        ##
    Calib         test_           275        ##
-   Hit           hit_rates_       276        ##
+   Hit           hit_rates_      276        ##
 # source 60Co
-   Hit           hit_rates_       067        ##
+   Hit           hit_rates_      067        ##
    Ped           pedestal_       068        ##
    Calib         test_           276        ##
-   Hit           hit_rates_       068        ##
+   Hit           hit_rates_      068        ##
 # source 90Sr
-   Hit           hit_rates_       069        ##
+   Hit           hit_rates_      069        ##
    Ped           pedestal_       070        ##
    Calib         test_           277        ##
-   Hit           hit_rates_       278        ##
+   Hit           hit_rates_      278        ##
 # source none 
-   Hit_Off       hit_rates_       070        ##
+   Hit_Off       hit_rates_      070        ##
    Ped           pedestal_       071        ##
    Dark          test_           278        ##
 # thrs 4 p.e                        
 # source 90Sr
-   Hit           hit_rates_       071        ##
+   Hit           hit_rates_      071        ##
    Ped           pedestal_       072        ##
    Calib         test_           279        ##
 # thrs 2 p.e
 # source 90Sr
-   Hit           hit_rates_       072        ##
+   Hit           hit_rates_      072        ##
    Ped           pedestal_       073        ##
    Calib         test_           280        ##
-   Hit           hit_rates_       281        ##
+   Hit           hit_rates_      281        ##
 # source 60Co
-   Hit           hit_rates_       073        ##
+   Hit           hit_rates_      073        ##
    Ped           pedestal_       074        ##
    Calib         test_           281        ##
-   Hit           hit_rates_       282        ##
+   Hit           hit_rates_      282        ##
 # thrs 1 p.e.
 # source 60Co
-   Hit           hit_rates_       074        ##
+   Hit           hit_rates_      074        ##
    Ped           pedestal_       075        ##
    Calib         test_           282        ##
-   Hit           hit_rates_       283        ##
+   Hit           hit_rates_      283        ##
 # source none
-   Hit_Off       hit_rates_       075        ##
+   Hit_Off       hit_rates_      075        ##
    Ped           pedestal_       076        ##
    Dark          test_           283        ##
 # source 22Na
-   Hit           hit_rates_       076        ##
+   Hit           hit_rates_      076        ##
    Ped           pedestal_       077        ##
    Calib         test_           284        ##
-   Hit           hit_rates_       285        ##
+   Hit           hit_rates_      285        ##
 # source 90Sr
-   Hit           hit_rates_       077        ##
+   Hit           hit_rates_      077        ##
    Ped           pedestal_       078        ##
    Calib         test_           285        ##
 # source none
-   Hit_Off       hit_rates_       078        ##
+   Hit_Off       hit_rates_      078        ##
    Dark          test_           286        ##
-   Hit_Off       hit_rates_       079        ##
+   Hit_Off       hit_rates_      079        ##
 
 
 
