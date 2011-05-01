@@ -17,3 +17,86 @@ threshold
 <target_material: Mg, Cu, None etc> <target_thickness: int>
 
 ================================================================================
+
+Program Flow:
+
+Start
+|
+Meta data exist?
+Y       N
+|       |
+|       Read file_dict.txt
+|       |
+|       Strip Metadata, generate file names
+|       |
+|       Add pedestal file to header info
+|       |
+Save metadata
+|
+Apply filters to select data
+|       |
+|       for all metadata
+|       |       |
+|       |       For all filters
+|       |       |       |
+|       |       |       Does current filter match metadata value?
+|       |       |       Y       N
+|       |       |       |       |       
+|       |       |       |       Remove from list
+|       |       |       |       |       
+Any thing left in the list after all loops exit?
+|       
+TODO Data set required exist?
+Y       N
+|       |        
+|       For each channel, for each data point use bin_data()
+|       |        
+|       TODO Is there a pedestal recorded? 
+|       Y       N        
+|       |       |
+|       |       Read pedestal file
+|       |       |
+|       |       Calculate pedestal (average of data)
+|       |       |
+|       TODO Subtract pedestal from histogram (this will need a new function)
+|       |       
+|       TODO Does ADC->photon data exist?
+|       Y       N
+|       |       |
+|       |       TODO choose data set (first set?)
+|       |       |
+|       |       apply bin_data()
+|       |       |
+|       |       smooth (apply gaussian kernel)
+|       |       | 
+|       |       peak_find()
+|       |       | 
+|       TODO Convert ADC bins into photons
+|       |  
+Return data set
+|
+TODO Plot data set
+|
+...
+|     
+Profit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

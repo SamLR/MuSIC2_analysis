@@ -35,8 +35,6 @@ def adc_to_photon(adc_data, adc_pedestal=0, min_adc_bin=0, max_adc_bin=4096, bin
 
 
 def toPhotons(data, n_bins, min_bin, max_bin, quiet=True):
-    # TODO implement gaussian smearing (search 1D gaussian kernal)
-    # TODO once above done use first derivative to find slope
     h = TH1D("d", "d", n_bins, min_bin, max_bin)
     for val in data: h.Fill(val)
     h.Draw()
@@ -127,67 +125,6 @@ def peak_fit(hist, n_bins, min_bin, max_bin):
     hist.Draw()
     hist.Fit(fit_all, fit_opt)
     return cArrayToList(fit_all.GetParameters(), 3*n_peaks)
-
-
-def bin_data(data, min_bin=0, max_bin=4096):
-    """
-    Bins the data in a histogram with range min_bin to max_bin
-    Entries outside of min/max_bin are put in \'underflow\' and \'overflow\' respectively"""
-    res = dict_of_numbered_zeros(min_bin, max_bin)
-    res["overflow"] = 0
-    res["underflow"] = 0
-    for entry in data:
-        # over/underflow checks 
-        if entry < min_bin:
-            res["underflow"] += 1
-        elif entry > max_bin:
-            res["overflow"] += 1
-        res[entry] += 1
-    return res
-
-
-def peak_find(histogram, thrs=10):
-    res = []
-    previous_y = 0 
-    previous_gradient = 0
-    previous_max_y = 999999
-    previous_min_y = 0
-    previous_max_x = 999999
-    for bin in histogram:
-        if (bin == "underflow") or (bin == "overflow"): continue
-        current_y = histogram[bin]
-        gradient = current_y - previous_y
-        if gradient > 0: 
-            gradient = 1
-        elif gradient < 0: 
-            gradient = -1
-        else:
-            gradient = 0
-        
-        # look for minima and maxima
-        # once a maxima and two adjacent minima have been found
-        # compare the difference between the maxima and the
-        # maximum of the two minima against a threshold
-        # this helps remove spurious peaks
-        if previous_gradient < 0 and gradient >= 0:
-            # found minima
-            previous_min_y = current_y
-            if (previous_max_y - max(previous_min_y, current_y) > thrs):
-                # real peak found between two minima
-                # TODO fix this check
-                if previous_max_x == 944:
-                    print previous_min_y, current_y, previous_max_y
-                res.append(previous_max_x)
-        elif previous_gradient > 0 and gradient <= 0:
-            # peak found? check against thrs at next minima
-            previous_max_y = current_y
-            previous_max_x = bin
-            
-        
-        previous_y = current_y
-        previous_gradient = gradient
-        
-    return res        
 
 
 def test():
