@@ -15,13 +15,24 @@ from pickle import *
 def main():
     to_store = [1, 2, 3, 5, 6, 21, 9]
     dict_to_store = {'this': 99, 'that': "chicken", 'the_other':to_store}
-    bigger = (dict_to_store, ['how', 'are', 'you'])
+    bigger = [dict_to_store, ['how', 'are', 'you']]
     
     
     with open("out.pickle", "w") as out_file:
         pickle_f = Pickler(out_file)
         pickle_f.dump(bigger)
     
+    with open("out.pickle", "r") as in_file:
+        pickle_i = Unpickler(in_file)
+        inbound = pickle_i.load()
+        print inbound
+        
+    inbound.append("hello")
+    
+    with open("out.pickle", "w") as out_file:
+        pickle_f = Pickler(out_file)
+        pickle_f.dump(inbound)
+        
     with open("out.pickle", "r") as in_file:
         pickle_i = Unpickler(in_file)
         print pickle_i.load()

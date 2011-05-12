@@ -3,6 +3,11 @@
 """
 file_generator.py
 
+Generates the metadata dictionary. The format for this dictionary is
+<file_name>:{'header':{}, 'data':}
+Only the header field is created by this file. Data fields are to be 
+added later during processing. 
+
 Created by Sam Cook on 2011-03-22.
 Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 """
@@ -13,6 +18,7 @@ from sams_utilities import *
 
 # metadata structure:
 # metadata (list)
+# OLD STRUCTURE:
 # -- entry 
 # -- -- header
 # -- -- -- source etc
@@ -20,79 +26,65 @@ from sams_utilities import *
 # -- -- -- list 
 # -- -- -- -- type
 # -- -- -- -- file_name
+# -- -- Data <= this is added elsewhere, stores analised data for that file
+#
+# NEW structure:
+# metadata (dict)
+# "file name": {'header':{type:,source:,position:,
+#               threshold:,target_material:, target_thickness:, pedestal:,}, 'data'}
 
 
-file_info_fmt = ['type', 'file_name']
-header_fmt = ['source', 'position', 'thrs','target_material',
-              'target_thickness', 'pedestal']
-              
-current_entry = {'header': None, 'file_info': []}
-current_header = {'source': 'beam', 'position': (0,0), 'thrs': 4,
-                  'target_material': 'mg', 'target_thickness': 3,
-                  'pedestal':None}
-                  
-adc_types = ("Dark", "Data", "Calib")
-hit_rate_types = ("Hit", "Hit_Off")
-# TODO either change file name or copy functionality into pickle dictionary creator
+header_fmt = ['type','pedestal', 'source', 'position', 'threshold','target_material',
+              'target_thickness',]                  
 
 def test():
-    file_dict = gen_metadata_list(verbose=False) 
-    # print file_dict
-    filters={'source':'beam', 'position':'(0,0)', 'type':'Data'}
+    file_dict = gen_metadata_list(file_name='file_dict.txt')#, verbose=True) 
+    filters={'source':'beam', 'position':'(0,0)', 'type':'data'}
     a = filter_metadata(file_dict, filters)    
     for i in a:
-        print i
-        # pass
-    h = {1:3, 2:4, 3:9, 5:20, "underflow":2}
-    print pedestal_subtraction(h, 6)
+        print i, '\n'
+    # h = {1:3, 2:4, 3:9, 5:20, "underflow":2}
+    # print pedestal_subtraction(h, 6)
 
 
-def gen_metadata_list(file_name_prefix='data/', file_name_suffix='.txt', verbose=False):
+def gen_metadata_list(file_name,  verbose=False):
     """
     Generates a time ordered list of entries which 
     group the files according to meta data
     Verbose mode will print out all headers & file info once it has been collated
     """
-    file_name = 'file_dict.txt'
-    entries = []
-    data = []
-    
+    metadata = {}
+    file_name_prefix = ''
+    file_name_suffix = ''
+    current_header = {'type':None,'source': 'beam', 'position': (0,0), 'thrs': 4,
+                      'target_material': 'mg', 'target_thickness': 3,
+                      'pedestal':None}
     with open(file_name, 'r') as file_in:
-        # generate a dictionary of entries
         for line in file_in:
-            # prepare the line for processing
-            # if line.isspace(): continue # skip blank lines
             if '##' in line:
                 line = line[:line.index('##')] # remove comments
-            if line.isspace() or not line: continue # is anything left?            
+            if line.isspace() or not line: continue # skip empty lines
             line = line.split()
             
-            # process the line
             if line[0] == '#':
-                # indicates changes header information 
-                key = line[1]
-                current_header[key] = line[2]
-                if data:
-                    # make sure that there is some data to save
-                    current_entry['file_info'] = data
-                    current_entry['header'] = current_header.copy()
-                    entries.append(current_entry.copy())
-                    data = []
+                if line[1] == 'suffix':
+                    file_name_suffix = line[2]
+                elif line[1] == 'prefix':
+                    file_name_prefix = line[2]
+                else:
+                    current_header[line[1]] = line[2]
             else:
-                # general data
-                line [1] = file_name_prefix + line[1] + line[2] + file_name_suffix
-                data.append(dict(zip(file_info_fmt, line)).copy())
+                key = file_name_prefix + line[1] + line[2] + file_name_suffix
+                current_header['type'] = line[0]
+                metadata[key] = {'header':current_header.copy(),}
     # add the final entries
-    current_entry['file_info'] = data
-    entries.append(current_entry)
     
     if verbose:
-        for i in entries: 
-            for j in i:
-                print '\t', j, ':\n', i[j]
-            print "*"*40,"\n"
-    
-    return entries
+        for entry in metadata.items(): 
+            print 'file: ', entry[0]
+            print entry[1]
+            print '*'*40
+    return metadata
 
 
 def calc_pedestals(pedestal_file, n_ch=4, comments=(":", ),):
@@ -145,21 +137,22 @@ def pedestal_subtraction(histogram, pedestal):
             res[bin-pedestal] = histogram[bin]
     return res
 
+
 def filter_metadata(metadata, filters):
     """
-    Returns a list of file names that match the search criteria
+    Returns a list of entries that match the search criteria
     listed in the dictionary filters.
     
     Filters must form key:(value, ) pairs where the keys are either
-    adc_types or header entries (see above). Value(s) _must_ be 
-    supplied as an iterable (e.g. a list or tuple) in order to 
-    allow multiple selections to be made upon a single criteria."""
+    header fields. Multiple values can be supplied for matching but
+    must be passed as an iterable.
+    
+    example filter: {'type':'data', 'source':('beam', 'None')}
+    Note: positions are supplied as strings"""
     res = []
-    header_filters = set(filters.keys()).intersection(header_fmt)
-    file_filters = set(filters.keys()).intersection(file_info_fmt)
+    
     # test for items that aren't lists/tuples and make them lists 
     for entry in filters.items():
-        # loop over each key:value item
         try:
             # test if the item is iterable (exec strings)
             getattr(entry[1], '__iter__')
@@ -167,21 +160,11 @@ def filter_metadata(metadata, filters):
             # if the filter is not iterable make it so
             filters[entry[0]] = [entry[1], ]
     
-    for entry in metadata:
-        correct_header = True
-        for criteria in header_filters:
-            if not is_list_in(entry['header'][criteria], filters[criteria]):
-                correct_header = False
-        if not correct_header: continue
-        
-        if not file_filters:
-            for file_entry in entry['file_info']:
-                res.append(file_entry['file_name'])
-        else:
-            for file_entry in entry['file_info']:
-                for criteria in file_filters:
-                    if is_list_in(file_entry[criteria], filters[criteria]):
-                        res.append(file_entry['file_name'])
+    for entry in metadata.items():
+        keep = True
+        for criteria in filters:
+            if not is_list_in(entry[1]['header'][criteria], filters[criteria]): keep = False
+        if keep: res.append(entry)
     return res
                     
               

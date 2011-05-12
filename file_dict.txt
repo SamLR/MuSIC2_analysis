@@ -7,6 +7,8 @@
 ## '#' is a note char for file readers (eg # cu target)
 ##
 ## data type     file prefix     number     notes 
+# suffix .txt
+# prefix data/
 # source beam
 # target_mat mg
 # position (0,0)   

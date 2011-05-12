@@ -2,7 +2,7 @@
 # encoding: utf-8
 """
 This will convert ADC bins to number of photons
-
+OLD: DON\'T USE THIS ONE!
 S. Cook 23-2-11
 """
 

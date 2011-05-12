@@ -81,6 +81,9 @@ TODO Plot data set
 |     
 Profit
 
+TODO class histogram dictionary
+TODO look at integrating histogram dict w/ Root possibly numpy etc for plotting?
+
 
 
 
