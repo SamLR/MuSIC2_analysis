@@ -78,6 +78,36 @@ def peak_find(histogram, thrs=10, kernel_radius=30, kernel_sigma=6.0, minima_as_
     return res        
 
 
+def calc_pedestals(pedestal_file, n_ch=4, comments=(":", ),):
+    """
+    Opens the pedestal_file and returns the average of each 
+    column of numbers as the pedestal for that channel. 
+    
+    It will ignore any lines that contain the strings contained
+    in the comments iterable.
+    """
+    # TODO implment method of taking n_ch from file (see histogram from file)
+    sum = [0 for i in range(n_ch)]
+    count = 0
+    with open(pedestal_file, "r") as in_file:
+        for line in in_file:
+            # check for comments/timestamps
+            if is_list_in(line, comments): continue
+            # split the line and increment the sum & count
+            line = line.split()
+            if len(line) != n_ch: 
+                print "WARNING: incomplete line, continuing [n_ch != len(line)]", line
+                continue
+            count += 1
+            for i in range(n_ch):
+                sum[i] += line[i]
+    res = []            
+    for val in sum: res.append(val/count)
+    return res
+    
+
+
+
 def test():
     pass
 

@@ -16,33 +16,15 @@ import sys
 import os
 from sams_utilities import *
 
-# metadata structure:
-# metadata (list)
-# OLD STRUCTURE:
-# -- entry 
-# -- -- header
-# -- -- -- source etc
-# -- -- file_info
-# -- -- -- list 
-# -- -- -- -- type
-# -- -- -- -- file_name
-# -- -- Data <= this is added elsewhere, stores analised data for that file
-#
-# NEW structure:
-# metadata (dict)
-# "file name": {'header':{type:,source:,position:,
-#               threshold:,target_material:, target_thickness:, pedestal:,}, 'data'}
-
-
-header_fmt = ['type','pedestal', 'source', 'position', 'threshold','target_material',
+header_fmt = ['type','pedestal_file', 'source', 'position', 'threshold','target_material',
               'target_thickness',]                  
 
 def test():
     file_dict = gen_metadata_list(file_name='file_dict.txt')#, verbose=True) 
-    filters={'source':'beam', 'position':'(0,0)', 'type':'data'}
+    filters={'source':'beam', 'position':'(0,0)', 'type':'Data'}
     a = filter_metadata(file_dict, filters)    
-    for i in a:
-        print i, '\n'
+    for i in a.items():
+        print i[0], '\n', i[1] ,'\n'
     # h = {1:3, 2:4, 3:9, 5:20, "underflow":2}
     # print pedestal_subtraction(h, 6)
 
@@ -87,60 +69,9 @@ def gen_metadata_list(file_name,  verbose=False):
     return metadata
 
 
-def calc_pedestals(pedestal_file, n_ch=4, comments=(":", ),):
-    """
-    Opens the pedestal_file and returns the average of each 
-    column of numbers as the pedestal for that channel. 
-    
-    It will ignore any lines that contain the strings contained
-    in the comments iterable.
-    """
-    sum = [0 for i in range(n_ch)]
-    count = 0
-    with open(pedestal_file, "r") as in_file:
-        for line in in_file:
-            # check for comments/timestamps
-            if is_list_in(line, comments): continue
-            # split the line and increment the sum & count
-            line = line.split()
-            if len(line) != n_ch: 
-                print "WARNING: incomplete line, continuing [n_ch != len(line)]", line
-                continue
-            count += 1
-            for i in range(n_ch):
-                sum[i] += line[i]
-    res = []            
-    for val in sum: res.append(val/count)
-    return res
-
-
-def pedestal_subtraction(histogram, pedestal):
-    """
-    Returns a histogram with pedestal subtracted from each bin"""
-    bins = histogram.keys()
-    min_bin = min(bins)
-    max_bin = max(bins)
-    while (max_bin == 'underflow' or max_bin == 'overflow') \
-        or (min_bin == 'underflow' or min_bin == 'overflow'):
-        bins.remove(max_bin)
-        max_bin = max(bins)
-    
-    if len(bins) == 0: raise ValueError ("empty histogram")
-    min_bin -= pedestal
-    max_bin -= pedestal
-    
-    res = dict_of_numbered_zeros(min_bin, max_bin)
-    for bin in histogram:
-        if bin == "underflow" or bin == "overflow":
-            res[bin] = histogram[bin]
-        else:
-            res[bin-pedestal] = histogram[bin]
-    return res
-
-
 def filter_metadata(metadata, filters):
     """
-    Returns a list of entries that match the search criteria
+    Returns a dictionary of entries that match the search criteria
     listed in the dictionary filters.
     
     Filters must form key:(value, ) pairs where the keys are either
@@ -149,7 +80,7 @@ def filter_metadata(metadata, filters):
     
     example filter: {'type':'data', 'source':('beam', 'None')}
     Note: positions are supplied as strings"""
-    res = []
+    res = {}
     
     # test for items that aren't lists/tuples and make them lists 
     for entry in filters.items():
@@ -164,7 +95,7 @@ def filter_metadata(metadata, filters):
         keep = True
         for criteria in filters:
             if not is_list_in(entry[1]['header'][criteria], filters[criteria]): keep = False
-        if keep: res.append(entry)
+        if keep: res[entry[0]] = entry[1]
     return res
                     
               

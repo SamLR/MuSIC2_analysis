@@ -7,9 +7,9 @@ Created by Sam Cook on 2011-05-12.
 Copyright (c) 2011 All rights reserved.
 """
 
-import sys
-import os
 from math import floor
+from sams_utilities import is_all_numbers, stall
+from pylab import plot, show
 
 class HistogramError(Exception):
     def __init__(self, value):
@@ -18,7 +18,6 @@ class HistogramError(Exception):
     def __str__(self):
         return repr(self.value)
     
-
 
 class Histogram(list):
     def __init__(self, data_list=None, bins=None):
@@ -31,7 +30,8 @@ class Histogram(list):
         will be used instead with bin width = 1.
         
         If bins only contains 2 values these will be taken as min
-        and max bin values (inclusive).
+        and max bin values (inclusive) a third value can be supplied as a
+        step size.
         
         If no data is supplied then an empty histogram is initialised.
         
@@ -47,42 +47,103 @@ class Histogram(list):
         if bins == None: 
             min_bin = int(round(min(data_list) - 0.5))
             max_bin = int(round(max(data_list) + 0.5))
-            bins = [i for i in range(min_bin, max_bin + 1)]
+            bins_t = [i for i in range(min_bin, max_bin + 1)]
         elif len(bins) == 2:
-            bins = [i for i in range(bins[0], bins[1] + 1)]
-        
-        bins.sort()
+            bins_t = [i for i in range(bins[0], bins[1] + 1)]
+        elif len(bins) == 3:
+            bins_t = [i for i in range(bins[0], bins[1] + 1), bins[2]]
+        else:
+            bins_t = bins[:]
+        bins_t.sort()
         if data_list: data_list.sort()
         
-        self.bounds = bins
-        self.min_bin = bins.pop(0)
-        self.max_bin = bins[-1]
+        self.min_bin = bins_t.pop(0)
+        self.max_bin = bins_t[-1]
+        self.bins = bins_t
         self.overflow = 0
         self.underflow = 0
         
-        if data_list == None:
-            for bin in bins: self.append(0)
-        else:
-            self.fill(data_list)
+        for bin in bins_t: self.append(0)
+        if data_list: self.fill(data_list)
     
-    def __getitem__(self, key):
-        bins = self.bounds[:]
-        bins.reverse()
-        for bin in bins:
-            if (key < bin): key = self.bounds.index(bin)
-        return list.__getitem__(self, key)
+    def __repr__(self):
+        # <U:,O:,M:, 
+        res = "Histogram <U:%i, Ov:%i, M:%.1f || "%(self.underflow, self.overflow, self.min_bin)
+        for i in range(len(self.bins)):
+            bin = self.bins[i]
+            val = self[i]
+            res += "%.1f:%i, " %(bin, val)
+        res = res [:-2] + ">" #remove trailing ', ' and close
+        return res
     
     def fill(self, data_list):
-        while (data_list[0] < self.min_bin): # count the underflow
+        """
+        Fills the histogram using the values in data_list"""
+        data = data_list[:]
+        data.sort()
+        for value in data: self.append_value(value)
+    
+    def append_value(self, value):
+        """
+        Add a single data point into the histogram"""
+        index = self.get_bin_at(value)
+        if str(index).lower() == 'overflow':
+            self.overflow += 1
+        elif str(index).lower() == 'underflow':
             self.underflow += 1
-            data_list.pop(0)
+        else:
+            self[index] += 1
+    
+    def get_bin_at(self, value):
+        """
+        Returns the bin index corresponding to value"""
+        if value < self.min_bin:
+            return 'Underflow'
+        elif value >= self.max_bin:
+            return 'Overflow'
+        else:
+            bins = self.bins[:]
+            bins.reverse()
+            res = None
+            while (value < bins[0]):
+                res = self.bins.index(bins.pop(0))
+                if not bins: break #run out of bins, exit loop
+            return res
+    
+    def plot(self):
+        """Plots the histogram"""
+        bins = self.bins[:]
+        bins_to_plot = [0 for i in range(2*(len(bins)) + 2)]
+        data_to_plot = bins_to_plot[:] 
+        for i in range(len(bins)):
+            bins_to_plot[2*i + 1] = bins[i - 1] if (i != 0) else self.min_bin
+            bins_to_plot[2*i + 2] = bins[i] 
+            data_to_plot[2*i + 1] = self[i]
+            data_to_plot[2*i + 2] = self[i]
+        bins_to_plot[0]  = self.min_bin
+        bins_to_plot[-1] = bins_to_plot[-2]
+        data_to_plot[0]  = 0
+        data_to_plot[-1] = 0
         
-        for bin in self.bounds:
-            self.append(0) # build the list as we go
-            while  data_list and (data_list[0] < bin):
-                self[-1] += 1
-                data_list.pop(0)
-        self.overflow += len(data_list) # what's left is the overflow
+        plot(bins_to_plot, data_to_plot, "k-")
+        show()
+    
+    def shift_bins(self, value):
+        """
+        Shifts the bin boundaries by some amount value"""
+        self.min_bin += value
+        for i in range(len(self.bins)): self.bins[i] += value
+        self.max_bin += value
+    
+    def add_histo(self, histo):
+        """
+        Add another histogram to this one, they must use the same bins"""
+        # find the first bin to start with
+        if self.bins != histo.bins: 
+            msg = "bin miss-match, please ensure both histogram use the same bins"
+            raise HistogramError(msg)
+        for bin in range(len(self)):
+            self[bin] += histo[bin]
     
 
 def float_range(max_val, min_val=0, step=1):
@@ -94,15 +155,80 @@ def float_range(max_val, min_val=0, step=1):
         i += step
     return res
 
+def file_to_histogram(file_in, bins=None):
+    """
+    Reads in a file, and saves the values found there as histograms
+    one histogram is returned for each column in the file (space delimitated)
+    in a list.
+    
+    Bins defines the upper bounds of the bins to be used. The first item should
+    be the lower bound of the first bin. If only two arguments are given for bins
+    these are taken as the absolute lower and upper bounds of the histogram
+    """
+    data = []
+    res = []
+    with open(file_in, "r") as file_in:
+        for line in file_in:
+            if not is_all_numbers(line): continue
+            line = line.split()
+            
+            for histogram, value in map(None, data, line):
+                # if a new column is encountered add another list
+                if histogram == None:  
+                    histogram = []
+                    data.append(histogram)
+                    # if there is a value to be added, add it
+                if value: 
+                    histogram.append(float(value))
+    for histogram in data:
+        res.append(Histogram(data_list=histogram, bins=bins))
+    return res
+                    
+            
+
 
 def test():
     print 'float_range(6)', float_range(6)    
     print 'float_range(6, 7)', float_range(6, 7)
     print 'float_range(3, 10, 0.6)', float_range(3, 10, 0.2)
+    print '*'*40
+    
+    h = Histogram(bins = [1,3,5,9, 7,])
+    print 'h.get_bin_at(0)', h.get_bin_at(0)
+    print 'h.get_bin_at(10)', h.get_bin_at(10)    
+    print 'h.get_bin_at(1.1)', h.get_bin_at(1.1)
+    print 'h.get_bin_at(8.9)', h.get_bin_at(8.9)
+    print '*'*40
+    
+    print 'h[0]', h
+    print 'h[-1]', h[-1]
+    print '*'*40
     
     print 'histogram 1', Histogram([1,1,1,2,2,2,4,4,4])
     print 'histogram 2', Histogram(bins=[1,2,3,7,])
     print 'histogram 3', Histogram([1,1,1,2,2,2,4,4,4], [1,2,3,7,])
+    print '*'*40
+    
+    print 'file_to_histogram(test_hist1.txt)', 
+    print file_to_histogram('test_hist1.txt')
+    print 'file_to_histogram(test_hist1.txt, [1,4])', 
+    print file_to_histogram('test_hist1.txt', [1,4])
+    print 'file_to_histogram(test_hist2.txt, [1,9])',
+    h2 =file_to_histogram('test_hist2.txt', [1,9])
+    print h2
+    # h2[2].plot()
+    print 'file_to_histogram(test_hist1.txt, [1,2,3,5])',
+    h3 =file_to_histogram('test_hist1.txt', [1,2,3,5])
+    print h3
+    print '*'*40    
+    # h3[1].plot()
+    h3[1].shift_bins(-5)
+    print h3[1]
+    h3[1].add_histo(h3[1])
+    print h3[1]
+    # h3[1].plot()
+    
+
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@
 # source beam
 # target_mat mg
 # position (0,0)   
-# pedestal data/test_209.txt        ##       
+# pedestal_file data/test_209.txt        ##       
    Dark          test_           210        ##       
    Data          test_           220        ##       
    Data          test_           221        ##       
@@ -101,7 +101,7 @@
    Data          test_           239        ##  position (0, 0)                   
    Data          test_           240        ##  position (0, 0)                   
    Data          test_           241        ##  position (0, 0)                   
-# pedestal data/pedestal_001.txt
+# pedestal_file  data/pedestal_001.txt
    Data          test_           242        ##  position (0, 0)                   
 ## upstream detector changed                                 
 # target_mat thicker                                         
@@ -186,7 +186,7 @@
 ##
    Hit_Off       hit_rates_      060        ##  position (-35, 25)                
    Dark          test_           266        ##  position (-35, 25)                       
-# pedestal data/test_267.txt
+# pedestal_file  data/test_267.txt
 ##
    Hit           hit_rates_      061        ##  position (-35, 25)                
    Data          test_           268        ##  position (-35, 25)                                                                                                          
@@ -200,68 +200,68 @@
    Hit           hit_rates_      271        ##  position (-35, 25)                       
 ##
    Hit_Off       hit_rates_      064        ##  position (-35, 25)                
-# pedestal data/test_272.txt
+# pedestal_file  data/test_272.txt
    Dark          test_           273        ##  position (-35, 25)                   
 ## beam time end calibration data
 ## calibration
 # source none
    Hit_Off       hit_rates_      065        ##
-# pedestal data/pedestal_066.txt
+# pedestal_file  data/pedestal_066.txt
    Dark          test_           274        ##
    Hit_Off       hit_rates_      275        ##
 # source 22Na
    Hit           hit_rates_      066        ##
-# pedestal data/pedestal_067.txt
+# pedestal_file  data/pedestal_067.txt
    Calib         test_           275        ##
    Hit           hit_rates_      276        ##
 # source 60Co
    Hit           hit_rates_      067        ##
-# pedestal data/pedestal_068.txt
+# pedestal_file  data/pedestal_068.txt
    Calib         test_           276        ##
    Hit           hit_rates_      068        ##
 # source 90Sr
    Hit           hit_rates_      069        ##
-# pedestal data/pedestal_070.txt
+# pedestal_file  data/pedestal_070.txt
    Calib         test_           277        ##
    Hit           hit_rates_      278        ##
 # source none 
    Hit_Off       hit_rates_      070        ##
-# pedestal data/pedestal_071.txt
+# pedestal_file  data/pedestal_071.txt
    Dark          test_           278        ##
 # thrs 4 p.e                        
 # source 90Sr
    Hit           hit_rates_      071        ##
-# pedestal data/pedestal_072.txt
+# pedestal_file  data/pedestal_072.txt
    Calib         test_           279        ##
 # thrs 2 p.e
 # source 90Sr
    Hit           hit_rates_      072        ##
-# pedestal data/pedestal_073.txt
+# pedestal_file  data/pedestal_073.txt
    Calib         test_           280        ##
    Hit           hit_rates_      281        ##
 # source 60Co
    Hit           hit_rates_      073        ##
-# pedestal data/pedestal_074.txt
+# pedestal_file  data/pedestal_074.txt
    Calib         test_           281        ##
    Hit           hit_rates_      282        ##
 # thrs 1 p.e.
 # source 60Co
    Hit           hit_rates_      074        ##
-# pedestal data/pedestal_075.txt
+# pedestal_file  data/pedestal_075.txt
    Calib         test_           282        ##
    Hit           hit_rates_      283        ##
 # source none
    Hit_Off       hit_rates_      075        ##
-# pedestal data/pedestal_076.txt
+# pedestal_file  data/pedestal_076.txt
    Dark          test_           283        ##
 # source 22Na
    Hit           hit_rates_      076        ##
-# pedestal data/pedestal_077.txt
+# pedestal_file  data/pedestal_077.txt
    Calib         test_           284        ##
    Hit           hit_rates_      285        ##
 # source 90Sr
    Hit           hit_rates_      077        ##
-# pedestal data/pedestal_078.txt
+# pedestal_file  data/pedestal_078.txt
    Calib         test_           285        ##
 # source none
    Hit_Off       hit_rates_      078        ##
