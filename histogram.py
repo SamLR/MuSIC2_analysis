@@ -188,14 +188,13 @@ def convolve(histogram, kernel):
     
     The kernel must be a dictionary of <offset: value> pairs
     """
-    res = Histogram(histogram.bins) # make an empty histogram 
+    res = Histogram(bins=histogram.bins[:]) # make an empty histogram 
     res.underflow = histogram.underflow
     res.overflow = histogram.overflow
     max_len = len(res.bins)
     # bins = res.bins[:]
     # min_bin = res.min_bin
     # max_bin = res.max_bin
-    
     for index in range(max_len):
         for offset in kernel:
             # ignore bins outside of the range
@@ -387,14 +386,18 @@ def test():
     print '*'*40
     print "stress test"
     hf4 = file_to_histogram('data/test_223.txt')
+    hf5 = file_to_histogram('data/test_209.txt') # pedestal
+    # hf5[0].plot()
     # for i in hf4: print "\t", i
     print "produce plots (smoothed and unsmoothed)"
     # f = hf4[0].plot()
     k = gaussian_kernel(30, 6)
-    hc = convolve(hf4[0], k)
+    hc = convolve(hf4[1], k)
+    hc2 = convolve(hf5[1], k)
     # f2 = hc.plot()
     print '*'*40
     print "find peaks", find_peaks(hc)
+    print "find peaks2", find_peaks(hc2)
     show()
     
     # stall(5)
