@@ -54,7 +54,7 @@ def gen_metadata_list(file_name,  verbose=False):
                 elif line[1] == 'prefix':
                     file_name_prefix = line[2]
                 else:
-                    current_header[line[1]] = line[2]
+                    current_header[line[1].lower()] = line[2].lower() 
             else:
                 key = file_name_prefix + line[1] + line[2] + file_name_suffix
                 current_header['type'] = line[0]

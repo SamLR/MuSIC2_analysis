@@ -8,8 +8,9 @@ Copyright (c) 2011 All rights reserved.
 """
 
 from math import floor
-from sams_utilities import is_all_numbers, stall
-from pylab import plot, show
+from sams_utilities import is_all_numbers, stall, gaussian_kernel
+# from pylab import plot, show
+from matplotlib.pyplot import figure, plot, show
 
 class HistogramError(Exception):
     def __init__(self, value):
@@ -20,6 +21,7 @@ class HistogramError(Exception):
     
 
 class Histogram(list):
+    figures = 0
     def __init__(self, data_list=None, bins=None):
         """
         Bins defines the upper bounds of each bin. The smallest number
@@ -62,6 +64,7 @@ class Histogram(list):
         self.bins = bins_t
         self.overflow = 0
         self.underflow = 0
+        self.last = 0 # used by next
         
         for bin in bins_t: self.append(0)
         if data_list: self.fill(data_list)
@@ -75,6 +78,18 @@ class Histogram(list):
             res += "%.1f:%i, " %(bin, val)
         res = res [:-2] + ">" #remove trailing ', ' and close
         return res
+    
+    def __iter__(self):
+        return self
+    
+    def next(self,):
+        if self.last == len(self):
+            self.last = 0 # reset iteration for next time
+            raise StopIteration
+        else:
+            index = self.last
+            self.last += 1
+            return self.bins[index], self[index] 
     
     def fill(self, data_list):
         """
@@ -94,15 +109,6 @@ class Histogram(list):
     
     def sort(self, ):
         raise HistogramError("WARNING: cannot sort a histogram")
-    
-    def fill2(self, data_list):
-        """
-        Fills the histogram using the values in data_list"""
-        data = data_list[:]
-        data.sort()
-        for value in data: 
-            self.append_value(value)
-        # TODO optimise this
     
     def append_value(self, value):
         """
@@ -145,9 +151,10 @@ class Histogram(list):
         bins_to_plot[-1] = bins_to_plot[-2]
         data_to_plot[0]  = 0
         data_to_plot[-1] = 0
-        
+        f = figure(Histogram.figures)
+        Histogram.figures += 1
         plot(bins_to_plot, data_to_plot, "k-")
-        show()
+        return f
     
     def shift_bins(self, value):
         """
@@ -166,6 +173,36 @@ class Histogram(list):
         for bin in range(len(self)):
             self[bin] += histo[bin]
     
+    def copy(self):
+        res = Histogram(bins=self.bins)
+        res.overflow = self.overflow
+        res.underflow = self.underflow
+        for i in range(len(res)):
+            res[i] = self[i]
+        return res
+    
+
+def convolve(histogram, kernel):
+    """
+    Returns the convolution of histogram and kernel
+    
+    The kernel must be a dictionary of <offset: value> pairs
+    """
+    res = Histogram(histogram.bins) # make an empty histogram 
+    res.underflow = histogram.underflow
+    res.overflow = histogram.overflow
+    max_len = len(res.bins)
+    # bins = res.bins[:]
+    # min_bin = res.min_bin
+    # max_bin = res.max_bin
+    
+    for index in range(max_len):
+        for offset in kernel:
+            # ignore bins outside of the range
+            if (offset + index < 0) or \
+               (offset + index >= max_len): continue
+            res[index] += kernel[offset]*histogram[index+offset]
+    return res
 
 def float_range(max_val, min_val=0, step=1):
     if min_val > max_val: min_val, max_val = max_val, min_val
@@ -207,6 +244,89 @@ def file_to_histogram(file_in, bins=None):
                     
             
 
+def find_peaks(histogram, thrs=1, kernel_radius=30, kernel_sigma=6.0, minima_as_boundries=True):
+    """
+    Finds peaks within the histogram. 
+    
+    This is done by first applying a Gaussian filter with size
+    (2*kernel_radius)-1 and sigma kernel_sigma to the histogram.
+    
+    Peaks are found by inspecting the gradient at each bin; once
+    two minima are located the maximum between them is inspected, if 
+    its height (compared to the larger of the two minima) is greater
+    than the threshold (thrs) then the bin it corresponds to is 
+    added to the returned list of bins. 
+    
+    If minima_as_boundries is true then this returns a pair of values:
+    [max_peak_bin, current_minima_bin]. This allows the minima to be 
+    used as a boundary.
+    """   
+    # TODO re-write this for new histogram
+    kernel = gaussian_kernel(kernel_size=kernel_radius, sigma=kernel_sigma)
+    hist = convolve(histogram, kernel)
+    res = []
+    previous_y = 0           # height of previous bin
+    previous_gradient = 0    # gradient at previous bin
+    previous_max_y = 999999  # maxima's height
+    previous_min_y = 0       # minima's height (for thrs)
+    previous_max_x = 999999  # maxima's bin
+    for current_x, current_y in hist:
+        gradient = current_y - previous_y   
+        # set the gradient for easy testing
+        if gradient > 0: 
+            gradient = 1
+        elif gradient < 0: 
+            gradient = -1
+        else:
+            gradient = 0
+        # Check if a minima or maxima has been found and if
+        # it's a minima check if it is to one side of a 
+        # maxima of suitable height
+        if previous_gradient < 0 and gradient >= 0:
+            # found minima check the previous maxima
+            if (previous_max_y - max(previous_min_y, current_y) > thrs):
+                # real peak found between two minima
+                if minima_as_boundries:
+                    res.append([previous_max_x, current_x])
+                else:
+                    res.append(previous_max_x)
+            # update the minima irrespective of if it is associated with a peak
+            previous_min_y = current_y
+        elif previous_gradient > 0 and gradient <= 0:
+            # maxima; store then check against thrs at next minima
+            previous_max_y = current_y
+            previous_max_x = current_x
+            
+        # set values for next bin
+        previous_y = current_y
+        previous_gradient = gradient
+    return res        
+
+def calc_pedestals(pedestal_file, comments=(":", ),):
+    """
+    Opens the pedestal_file and returns the average of each 
+    column of numbers as the pedestal for that channel. 
+    
+    It will ignore any lines that contain the strings contained
+    in the comments iterable.
+    """
+    # TODO see if there's a better place for this
+    sums = []
+    count = 0
+    with open(pedestal_file, "r") as in_file:
+        for line in in_file:
+            if not is_all_numbers(line): continue
+            line = line.split()
+            count += 1
+            while len(sums) < len(line): sums.append(0)
+            for i in range(len(line)):
+                sums[i] += float(line[i])
+    print sums
+    res = []            
+    for val in sums: res.append(val/count)
+    return res
+
+
 
 def test():
     print 'float_range(6)', float_range(6)    
@@ -214,14 +334,12 @@ def test():
     print 'float_range(3, 10, 0.6)', float_range(3, 10, 0.2)
     print '*'*40
     
-    h = Histogram(bins = [1,3,5,9, 7,])
+    h = Histogram(bins = [1,3,5,9,7,])
+    print "h = Histogram(bins = [1,3,5,9,7,])"
     print 'h.get_bin_at(0)', h.get_bin_at(0)
     print 'h.get_bin_at(10)', h.get_bin_at(10)    
     print 'h.get_bin_at(1.1)', h.get_bin_at(1.1)
     print 'h.get_bin_at(8.9)', h.get_bin_at(8.9)
-    print '*'*40
-    
-    print 'h[0]', h
     print 'h[-1]', h[-1]
     print '*'*40
     
@@ -235,7 +353,17 @@ def test():
     
     print 'file_to_histogram(test_hist1.txt)' 
     hf = file_to_histogram('test_hist1.txt')
-    for i in hf: print "\t", i
+    print '*'*40
+    print "iteration test => for i in hf: print i"
+    for i in hf: print i
+    
+    a = hf[0].copy()
+    a[0] += 1
+    print '*'*40
+    print "copy test: a = b.copy(); a[0] = b[0] + 1"
+    print "A", a
+    print "B", hf[0]
+    print '*'*40
     
     print '\n file_to_histogram(test_hist1.txt, [1,4])' 
     hf2 = file_to_histogram('test_hist1.txt', [1,4])
@@ -249,17 +377,27 @@ def test():
     print '\n file_to_histogram(test_hist1.txt, [1,2,3,5])',
     h3 =file_to_histogram('test_hist1.txt', [1,2,3,5])
     for i in hf: print "\t", i
-    print '*'*40    
-    # h3[1].plot()
+    print '*'*40  
+    
     h3[1].shift_bins(-5)
     print h3[1]
     h3[1].add_histo(h3[1])
     print h3[1]
-    # h3[1].plot()
+    
     print '*'*40
     print "stress test"
     hf4 = file_to_histogram('data/test_223.txt')
-    for i in hf4: print "\t", i
+    # for i in hf4: print "\t", i
+    print "produce plots (smoothed and unsmoothed)"
+    # f = hf4[0].plot()
+    k = gaussian_kernel(30, 6)
+    hc = convolve(hf4[0], k)
+    # f2 = hc.plot()
+    print '*'*40
+    print "find peaks", find_peaks(hc)
+    show()
+    
+    # stall(5)
 
 
 
