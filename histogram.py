@@ -79,9 +79,30 @@ class Histogram(list):
     def fill(self, data_list):
         """
         Fills the histogram using the values in data_list"""
+        # todo compare fill w/ sort before & fill run per data item 
+        data_list.sort()
+        while (data_list[0] < self.min_bin):
+            self.underflow += 1
+            data_list.pop(0)
+        prev_bin = self.min_bin
+        for i in range(len(self.bins)):
+            while data_list and (prev_bin <= data_list[0] < self.bins[i]):
+                self[i] += 1
+                data_list.pop(0)
+            prev_bin = self.bins[i]
+        if data_list: self.overflow = len(data_list)
+    
+    def sort(self, ):
+        raise HistogramError("WARNING: cannot sort a histogram")
+    
+    def fill2(self, data_list):
+        """
+        Fills the histogram using the values in data_list"""
         data = data_list[:]
         data.sort()
-        for value in data: self.append_value(value)
+        for value in data: 
+            self.append_value(value)
+        # TODO optimise this
     
     def append_value(self, value):
         """
@@ -204,22 +225,30 @@ def test():
     print 'h[-1]', h[-1]
     print '*'*40
     
-    print 'histogram 1', Histogram([1,1,1,2,2,2,4,4,4])
-    print 'histogram 2', Histogram(bins=[1,2,3,7,])
-    print 'histogram 3', Histogram([1,1,1,2,2,2,4,4,4], [1,2,3,7,])
+    print 'Histogram([1,2,2,4,4,4])'
+    print Histogram([1,2,2,4,4,4])
+    print 'Histogram(bins=[1,2,3,7,])'
+    print Histogram(bins=[1,2,3,7,])
+    print 'Histogram([1,1,1,2,2,2,4,4,4], [1,2,3,7,])'
+    print Histogram([1,1,1,2,2,2,4,4,4], [1,2,3,7,])
     print '*'*40
     
-    print 'file_to_histogram(test_hist1.txt)', 
-    print file_to_histogram('test_hist1.txt')
-    print 'file_to_histogram(test_hist1.txt, [1,4])', 
-    print file_to_histogram('test_hist1.txt', [1,4])
-    print 'file_to_histogram(test_hist2.txt, [1,9])',
-    h2 =file_to_histogram('test_hist2.txt', [1,9])
-    print h2
+    print 'file_to_histogram(test_hist1.txt)' 
+    hf = file_to_histogram('test_hist1.txt')
+    for i in hf: print "\t", i
+    
+    print '\n file_to_histogram(test_hist1.txt, [1,4])' 
+    hf2 = file_to_histogram('test_hist1.txt', [1,4])
+    for i in hf2: print "\t", i
+    
+    print '\n file_to_histogram(test_hist2.txt, [1,9])'
+    hf3 =file_to_histogram('test_hist2.txt', [1,9])
+    for i in hf3: print "\t", i
+    
     # h2[2].plot()
-    print 'file_to_histogram(test_hist1.txt, [1,2,3,5])',
+    print '\n file_to_histogram(test_hist1.txt, [1,2,3,5])',
     h3 =file_to_histogram('test_hist1.txt', [1,2,3,5])
-    print h3
+    for i in hf: print "\t", i
     print '*'*40    
     # h3[1].plot()
     h3[1].shift_bins(-5)
@@ -227,7 +256,10 @@ def test():
     h3[1].add_histo(h3[1])
     print h3[1]
     # h3[1].plot()
-    
+    print '*'*40
+    print "stress test"
+    hf4 = file_to_histogram('data/test_223.txt')
+    for i in hf4: print "\t", i
 
 
 
