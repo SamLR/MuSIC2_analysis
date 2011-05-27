@@ -228,12 +228,12 @@
    Hit_Off       hit_rates_      070        ##
 # pedestal_file  data/pedestal_071.txt
    Dark          test_           278        ##
-# thrs 4 p.e                        
+# threshold 4 p.e                        
 # source 90Sr
    Hit           hit_rates_      071        ##
 # pedestal_file  data/pedestal_072.txt
    Calib         test_           279        ##
-# thrs 2 p.e
+# threshold 2 p.e
 # source 90Sr
    Hit           hit_rates_      072        ##
 # pedestal_file  data/pedestal_073.txt
@@ -244,7 +244,7 @@
 # pedestal_file  data/pedestal_074.txt
    Calib         test_           281        ##
    Hit           hit_rates_      282        ##
-# thrs 1 p.e.
+# threshold 1 p.e.
 # source 60Co
    Hit           hit_rates_      074        ##
 # pedestal_file  data/pedestal_075.txt

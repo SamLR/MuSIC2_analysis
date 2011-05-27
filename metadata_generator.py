@@ -16,9 +16,12 @@ import sys
 import os
 from sams_utilities import *
 
-header_fmt = ['type','pedestal_file', 'source', 'position', 'threshold','target_material',
-              'target_thickness',]                  
-
+# header_fmt = ['type','pedestal_file', 'source', 'position', 'threshold','target_material',
+              # 'target_thickness',]   
+initial_values = {'type':"None", 'source': 'beam', 'position': "(0,0)", 'threshold': "1",
+                 'target_material': 'mg', 'target_thickness': "3",
+                 'pedestal_file':"None"}               
+header_fmt = initial_values.keys()
 def test():
     file_dict = gen_metadata_list(file_name='file_dict.txt')#, verbose=True) 
     filters={'source':'beam', 'position':'(0,0)', 'type':'Data'}
@@ -38,16 +41,13 @@ def gen_metadata_list(file_name,  verbose=False):
     metadata = {}
     file_name_prefix = ''
     file_name_suffix = ''
-    current_header = {'type':None,'source': 'beam', 'position': (0,0), 'thrs': 4,
-                      'target_material': 'mg', 'target_thickness': 3,
-                      'pedestal':None}
+    current_header = initial_values
     with open(file_name, 'r') as file_in:
         for line in file_in:
             if '##' in line:
                 line = line[:line.index('##')] # remove comments
             if line.isspace() or not line: continue # skip empty lines
             line = line.split()
-            
             if line[0] == '#':
                 if line[1] == 'suffix':
                     file_name_suffix = line[2]
@@ -91,10 +91,16 @@ def filter_metadata(metadata, filters):
             # if the filter is not iterable make it so
             filters[entry[0]] = [entry[1], ]
     
+    for entry in filters.items():
+        for val, i in zip(entry[1], range(len(entry[1]))): 
+            entry[1][i] = val.lower()
+        filters[entry[0]] = entry[1]
+            
     for entry in metadata.items():
         keep = True
         for criteria in filters:
-            if not is_list_in(entry[1]['header'][criteria], filters[criteria]): keep = False
+            test = entry[1]['header'][criteria].lower()
+            if not is_list_in(test, filters[criteria]): keep = False
         if keep: res[entry[0]] = entry[1]
     return res
                     

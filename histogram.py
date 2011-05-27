@@ -14,10 +14,7 @@ from matplotlib.pyplot import figure, plot, show
 
 class HistogramError(Exception):
     def __init__(self, value):
-        self.value = value
-    
-    def __str__(self):
-        return repr(self.value)
+        Exception.__init__(self, value)
     
 
 class Histogram(list):
@@ -39,7 +36,7 @@ class Histogram(list):
         
         Supplying neither data or bins will raise a HistogramError.
         """
-        
+        # TODO add optional Min_bin to avoid need to pop first bin?
         if data_list == None and bins == None: 
             msg = "Unable to initialise histogram, please supply either bins or data"
             raise HistogramError(msg)
@@ -168,13 +165,17 @@ class Histogram(list):
         Add another histogram to this one, they must use the same bins"""
         # find the first bin to start with
         if self.bins != histo.bins: 
+            for i, j in map(None, self.bins, histo.bins): print i, j
             msg = "bin miss-match, please ensure both histogram use the same bins"
             raise HistogramError(msg)
+            
         for bin in range(len(self)):
             self[bin] += histo[bin]
     
     def copy(self):
-        res = Histogram(bins=self.bins)
+        bins = self.bins[:]
+        bins.insert(0, self.min_bin) # first bin is lower bound
+        res = Histogram(bins=bins)
         res.overflow = self.overflow
         res.underflow = self.underflow
         for i in range(len(res)):
@@ -243,7 +244,7 @@ def file_to_histogram(file_in, bins=None):
                     
             
 
-def find_peaks(histogram, thrs=1, kernel_radius=30, kernel_sigma=6.0, minima_as_boundries=True):
+def find_peaks(histogram, thrs=5, kernel_radius=30, kernel_sigma=6.0, minima_as_boundries=True):
     """
     Finds peaks within the histogram. 
     
@@ -320,7 +321,6 @@ def calc_pedestals(pedestal_file, comments=(":", ),):
             while len(sums) < len(line): sums.append(0)
             for i in range(len(line)):
                 sums[i] += float(line[i])
-    print sums
     res = []            
     for val in sums: res.append(val/count)
     return res
@@ -405,4 +405,5 @@ def test():
 
 
 if __name__ == '__main__':
+    raise HistogramError("MONKEY!!")
     test()

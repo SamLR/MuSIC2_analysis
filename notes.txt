@@ -46,24 +46,24 @@ Apply filters to select data
 |       |       |       |       |       
 Any thing left in the list after all loops exit?
 |       
-TODO Data set required exist?
+Data set required exist?
 Y       N
 |       |        
 |       For each channel, for each data point use bin_data()
 |       |        
-|       TODO Is there a pedestal recorded? 
+|       Is there a pedestal recorded? 
 |       Y       N        
 |       |       |
 |       |       Read pedestal file
 |       |       |
 |       |       Calculate pedestal (average of data)
 |       |       |
-|       TODO Subtract pedestal from histogram (this will need a new function)
+|       Subtract pedestal from histogram (this will need a new function)
 |       |       
-|       TODO Does ADC->photon data exist?
+|       Does ADC->photon data exist?
 |       Y       N
 |       |       |
-|       |       TODO choose data set (first set?)
+|       |       choose data set (first set?)
 |       |       |
 |       |       apply bin_data()
 |       |       |
@@ -71,18 +71,18 @@ Y       N
 |       |       | 
 |       |       peak_find()
 |       |       | 
-|       TODO Convert ADC bins into photons
+|       Convert ADC bins into photons
 |       |  
 Return data set
 |
-TODO Plot data set
+Plot data set
 |
 ...
 |     
 Profit
 
-TODO class histogram dictionary
-TODO look at integrating histogram dict w/ Root possibly numpy etc for plotting?
+class histogram dictionary
+look at integrating histogram dict w/ Root possibly numpy etc for plotting?
 
 
 
