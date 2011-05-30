@@ -12,6 +12,8 @@ from sams_utilities import is_all_numbers, stall, gaussian_kernel
 # from pylab import plot, show
 from matplotlib.pyplot import figure, plot, show
 
+# TODO look at expanding this to 2D histograms
+# TODO possible refactor using Dict/Ordered Dict
 class HistogramError(Exception):
     def __init__(self, value):
         Exception.__init__(self, value)

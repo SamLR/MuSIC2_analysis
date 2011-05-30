@@ -81,31 +81,22 @@ def filter_metadata(metadata, filters):
     example filter: {'type':'data', 'source':('beam', 'None')}
     Note: positions are supplied as strings"""
     res = {}
-    
     # test for items that aren't lists/tuples and make them lists 
     for entry in filters.items():
-        try:
-            # test if the item is iterable (exec strings)
-            getattr(entry[1], '__iter__')
-        except AttributeError:
-            # if the filter is not iterable make it so
-            filters[entry[0]] = [entry[1], ]
-    
-    for entry in filters.items():
+        entry = list(entry)
+        if not hasattr(entry[1], '__iter__'):
+            entry[1] = [entry[1],]
+            
         for val, i in zip(entry[1], range(len(entry[1]))): 
             entry[1][i] = val.lower()
         filters[entry[0]] = entry[1]
-            
     for entry in metadata.items():
         keep = True
         for criteria in filters:
             test = entry[1]['header'][criteria].lower()
-            if not is_list_in(test, filters[criteria]): keep = False
+            if not test in filters[criteria]: keep = False
         if keep: res[entry[0]] = entry[1]
     return res
-                    
-              
-
 
 if __name__ == '__main__':
     test()
