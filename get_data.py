@@ -25,6 +25,7 @@ from sams_utilities import *
 peak_args={"thrs":5, "kernel_radius":15, "kernel_sigma":2.0, "minima_as_boundries":True}
 def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.pickle", verbose=False,
                  bin_merge=4, peak_args=peak_args, photon_bins=None, bad_channels=(3,)):
+                 # TODO look at hiding all of this in kargs?
     """
     Accesses and filters the metadata to find the relevant data files
     before processing the ADC data and presenting it. 
@@ -40,7 +41,8 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
     if verbose: print "Filtering data"
     filtered_list = filter_metadata(metadata, filters)
     res_photons = []
-    tmp_adc_hist = []
+    sum_adc_hist = [] # sum of all histograms
+    adc_hists = [] # per channel lists of histograms 
     prev_pedestals = []
     pedestals = []
     peaks = []
@@ -68,24 +70,25 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
             # convert current histogram to photons and save
             prev_pedestals = pedestals
             pedestals = header['pedestal']
-            for ch in tmp_adc_hist:
-                index = tmp_adc_hist.index(ch)
+            for ch in sum_adc_hist:
+                index = sum_adc_hist.index(ch)
                 ch.shift_bins(-1.0 * pedestals[index])
                 current_peaks = find_peaks(ch, **peak_args)
                 # print current_peaks
                 minima = [trough for peak, trough in current_peaks]
                 # TODO make this more elegant
                 if len(current_peaks) <= 1:
-                    info = (tmp_adc_hist.index(ch))
+                    info = (sum_adc_hist.index(ch))
                     print "Warning: fewer than one peak detected in ch %i, omitting."%info
                     continue
                 # print "here I am"
                 append_if_missing(peaks, index, current_peaks)
                 photons = adc_to_photon(ch,minima,photon_bins)
                 append_if_missing(res_photons, index, photons, lambda l, idx, ch: l[idx].add_histo(ch))
-            tmp_adc_hist = []
+            sum_adc_hist = []
 
         if filtered_list.items().index(entry) == (len(filtered_list) - 1):
+            # make sure the ultimate histogram is added to the sum
             # TODO make this not suck balls
             # reduce cyclical complexity, factor stuff out
             pedestals = header['pedestal']
@@ -94,10 +97,10 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
                 index = histos.index(ch)      # 
                 if ch in bad_channels: continue # skip bad channels
                 # TODO check if this skip actually works
-                append_if_missing(tmp_adc_hist, index, ch.copy(), lambda l, idx, ch: l[idx].add_histo(ch))
-                
-            for ch in tmp_adc_hist:
-                index = tmp_adc_hist.index(ch)
+                append_if_missing(sum_adc_hist, index, ch.copy(), lambda l, idx, ch: l[idx].add_histo(ch))
+                append_if_missing(adc_hists, index, [ch.copy()], lambda l, idx, ch: l[idx].append(ch[0]))
+            for ch in sum_adc_hist:
+                index = sum_adc_hist.index(ch)
 
                 ch.shift_bins(-1.0 * pedestals[index])
                 current_peaks = find_peaks(ch, **peak_args)
@@ -105,7 +108,7 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
                 minima = [trough for peak, trough in current_peaks]
                 # TODO make this more elegant
                 if len(current_peaks) <= 1:
-                    info = (tmp_adc_hist.index(ch))
+                    info = (sum_adc_hist.index(ch))
                     print "Warning: fewer than one peak detected in ch %i, omitting."%info
                     continue
                 # print "here I am"
@@ -117,7 +120,9 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
                 index = histos.index(ch)      # 
                 if ch in bad_channels: continue # skip bad channels
                 # TODO check if this skip actually works
-                append_if_missing(tmp_adc_hist, index, ch.copy(), lambda l, idx, ch: l[idx].add_histo(ch))
+                append_if_missing(sum_adc_hist, index, ch.copy(), lambda l, idx, ch: l[idx].add_histo(ch))
+                # create a list of _all_ the histograms listed by channel (I hope)
+                append_if_missing(adc_hists, index, [ch.copy()], lambda l, idx, ch: l[idx].append(ch[0]))
         entry[1]['histograms'] = histos
         metadata[entry[0]]['histograms'] = histos
         entry[1]['peaks'] = peaks
@@ -128,12 +133,15 @@ def get_adc_data(filters, metadata_src="file_dict.txt", metadata_file="metadata.
         info = (filtered_list.keys().index(entry[0]) + 1, len(filtered_list), entry[0])
         print "finished entry: %i of %i %s\n"%info
         # TODO  try summing pedestal subtracted adcs then converting to photons
-          
     if verbose: print "Summing histograms"    
     for h in res_photons:
         h.plot()
+    
+    for ch in adc_hists:
+        ch[0].plot()
     show()
-    stall(90)
+    print "\nlook at this:", len(adc_hists), '\n and this:', len(adc_hists[0])
+    # stall(90)
     save_metadata(metadata_file, metadata)
     return res_photons   
 
@@ -266,9 +274,9 @@ def average_file(input_file, comment_char=":"):
 
 
 
-def test():
-    filters = {'type':'Data', 'position':'(0,0)', 'source':'beam'}
-    # filters = {'type':'calib','threshold':'1','source':'90sr'}
+def test1():
+    # filters = {'type':'Data', 'position':'(0,0)', 'source':'beam'}
+    filters = {'type':'calib','threshold':'1','source':'90sr'}
     # TODO test with a variety of filters
     # TODO implement plotting of summed adc data for cf to photon data
     # ^ seems OK but devise thorough testing 
